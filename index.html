@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infográfico: Guia de Implantação</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+        }
+        .brand-dark-blue { color: #004AAD; }
+        .bg-brand-dark-blue { background-color: #004AAD; }
+        .brand-bright-blue { color: #0079E4; }
+        .bg-brand-bright-blue { background-color: #0079E4; }
+        .brand-light-blue { color: #59AFFF; }
+        .bg-brand-light-blue { background-color: #59AFFF; }
+        .brand-very-light-blue { color: #A8D4FF; }
+        .bg-brand-very-light-blue { background-color: #A8D4FF; }
+        .flow-arrow {
+            font-size: 2.5rem;
+            line-height: 1;
+            color: #A8D4FF;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 350px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        pre {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-size: 0.875rem;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold brand-dark-blue mb-2">Guia Visual de Implantação</h1>
+            <p class="text-lg text-gray-600">Arquitetura e Processo de Deploy da Aplicação de Gestão</p>
+        </header>
+
+        <main class="space-y-12">
+
+            <section id="arquitetura">
+                <h2 class="text-3xl font-bold text-center brand-dark-blue mb-8">Arquitetura da Solução</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 items-center">
+                    
+                    <!-- Coluna dos Frontends -->
+                    <div class="lg:col-span-2 flex flex-col gap-6">
+                        <div class="card p-6 text-center">
+                            <div class="text-5xl mb-4">🖥️</div>
+                            <h3 class="text-xl font-bold brand-bright-blue mb-2">Frontend Web</h3>
+                            <p class="text-gray-600">Interface para desktop, acessada via navegador. Consome dados do Backend.</p>
+                        </div>
+                        <div class="card p-6 text-center">
+                            <div class="text-5xl mb-4">📱</div>
+                            <h3 class="text-xl font-bold brand-bright-blue mb-2">Frontend Mobile</h3>
+                            <p class="text-gray-600">Interface otimizada para celulares (Flutter Web). Também consome dados do Backend.</p>
+                        </div>
+                    </div>
+
+                    <!-- Coluna das Setas -->
+                    <div class="hidden lg:flex flex-col justify-around items-center h-full">
+                        <div class="flow-arrow font-mono transform -rotate-90 lg:rotate-0">--&gt;</div>
+                        <div class="flow-arrow font-mono transform -rotate-90 lg:rotate-0">--&gt;</div>
+                    </div>
+                    
+                    <!-- Coluna do Backend -->
+                    <div class="lg:col-span-2 card p-8 text-center border-4 border-blue-500 h-full flex flex-col justify-center">
+                        <div class="text-6xl mb-4">⚙️</div>
+                        <h3 class="text-2xl font-bold brand-dark-blue mb-2">Backend API</h3>
+                        <p class="text-gray-600 text-lg">O cérebro da aplicação. Centraliza toda a lógica de negócio e acesso a dados.</p>
+                    </div>
+                </div>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 items-center">
+                    <div class="card p-6">
+                        <h3 class="text-2xl font-bold brand-dark-blue mb-4 text-center">Composição da Aplicação</h3>
+                        <p class="text-gray-600 text-center mb-4">A solução é dividida em três componentes principais, cada um empacotado em seu próprio contêiner para garantir modularidade e escalabilidade.</p>
+                        <div class="chart-container">
+                            <canvas id="compositionChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card p-6 bg-brand-dark-blue text-white">
+                        <h3 class="text-2xl font-bold mb-4 text-center">O Ponto Chave: Comunicação</h3>
+                        <p class="text-center mb-4">Para que os frontends funcionem, eles precisam saber o endereço do backend. Isso é feito através de uma variável de ambiente injetada no momento da execução.</p>
+                        <div class="bg-white/20 p-4 rounded-lg text-center">
+                            <p class="text-lg font-semibold">Variável de Ambiente</p>
+                            <p class="font-mono text-xl md:text-2xl break-all">VITE_API_URL</p>
+                            <p class="text-2xl my-2">=</p>
+                            <p class="font-mono text-xl md:text-2xl break-all">"http://IP_DO_SERVIDOR:8080"</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="border-t-2 border-gray-200">
+
+            <section id="segredos">
+                <h2 class="text-3xl font-bold text-center brand-dark-blue mb-8">Gestão Segura de Segredos</h2>
+                <div class="max-w-4xl mx-auto card p-6 md:p-8">
+                     <p class="text-center text-gray-600 mb-6">Nenhuma chave ou senha é armazenada na imagem. Todos os dados sensíveis devem ser injetados como variáveis de ambiente no contêiner do **Backend** durante a execução.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-center">
+                        <div class="bg-blue-50 p-3 rounded-lg"><p class="font-mono text-sm">ConnectionStrings__EmUso</p></div>
+                        <div class="bg-blue-50 p-3 rounded-lg"><p class="font-mono text-sm">JwtSettings__Secret</p></div>
+                        <div class="bg-blue-50 p-3 rounded-lg"><p class="font-mono text-sm">JwtSettings__ExpirationHours</p></div>
+                        <div class="bg-blue-50 p-3 rounded-lg"><p class="font-mono text-sm">RabbitMQ__HostName</p></div>
+                        <div class="bg-blue-50 p-3 rounded-lg"><p class="font-mono text-sm">RabbitMQ__UserName</p></div>
+                        <div class="bg-blue-50 p-3 rounded-lg"><p class="font-mono text-sm">RabbitMQ__Password</p></div>
+                        <div class="bg-blue-50 p-3 rounded-lg"><p class="font-mono text-sm">RecaptchaSettings__SiteKey</p></div>
+                        <div class="bg-red-50 p-3 rounded-lg border border-red-200 col-span-1 sm:col-span-2 lg:col-span-3"><p class="font-mono text-sm text-red-700">GOOGLE_CREDENTIALS_JSON (via volume)</p></div>
+                    </div>
+                </div>
+            </section>
+            
+            <hr class="border-t-2 border-gray-200">
+
+            <section id="processo">
+                <h2 class="text-3xl font-bold text-center brand-dark-blue mb-8">Processo de Implantação em 2 Etapas</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="card p-6">
+                        <h3 class="text-2xl font-bold brand-bright-blue mb-4">Etapa 1: Geração das imagens</h3>
+                        <ol class="relative border-l border-gray-200 space-y-6 pl-4">
+                            <li><span class="font-bold">Construir Imagens:</span> Gerar as 3 imagens Docker (`backend`, `frontend`, `mobile`).</li>
+                            <li><span class="font-bold">Salvar em Arquivos:</span> Exportar cada imagem para um arquivo `.tar`.</li>
+                            <li><span class="font-bold">Entregar Artefatos:</span> Enviar os 3 arquivos `.tar` e este documento.</li>
+                        </ol>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="text-2xl font-bold brand-bright-blue mb-4">Etapa 2: Responsabilidade da Prefeitura</h3>
+                         <ol class="relative border-l border-gray-200 space-y-6 pl-4">
+                            <li><span class="font-bold">Carregar Imagens:</span> Importar as imagens a partir dos arquivos `.tar`.</li>
+                            <li><span class="font-bold">Executar Backend:</span> Iniciar o contêiner do backend com as variáveis de ambiente.</li>
+                            <li><span class="font-bold">Executar Frontends:</span> Iniciar os contêineres de frontend apontando para o backend.</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="border-t-2 border-gray-200">
+
+            <section id="comandos">
+                 <h2 class="text-3xl font-bold text-center brand-dark-blue mb-8">Comandos de Exemplo</h2>
+                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="card p-6">
+                        <h3 class="text-xl font-bold mb-4 brand-dark-blue">1. Backend</h3>
+                        <pre><code>docker run -d --name gestao-backend \
+  -p 8080:8080 \
+  -e ConnectionStrings__... \
+  -e JwtSettings__... \
+  -e RabbitMQ__... \
+  -v /path/to/creds.json:/app/creds.json \
+  backend-app:latest</code></pre>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="text-xl font-bold mb-4 brand-dark-blue">2. Frontend Web</h3>
+                        <pre><code>docker run -d --name gestao-frontend-web \
+  -p 80:80 \
+  -e VITE_API_URL="http://IP:8080" \
+  frontend-app:latest</code></pre>
+                    </div>
+                     <div class="card p-6">
+                        <h3 class="text-xl font-bold mb-4 brand-dark-blue">3. Frontend Mobile</h3>
+                        <pre><code>docker run -d --name gestao-frontend-mobile \
+  -p 81:80 \
+  -e API_URL="http://IP:8080" \
+  mobile-app:latest</code></pre>
+                    </div>
+                 </div>
+            </section>
+
+        </main>
+
+        <footer class="text-center mt-16 text-gray-500 text-sm">
+            <p>Infográfico gerado para facilitar a implantação no ambiente da Prefeitura de Maricá.</p>
+            <p>&copy; 2025. Todos os direitos reservados.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('compositionChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Backend (.NET)', 'Frontend (Web)', 'Mobile (Flutter Web)'],
+                    datasets: [{
+                        label: 'Composição da Aplicação',
+                        data: [33.3, 33.3, 33.3],
+                        backgroundColor: [
+                            '#004AAD',
+                            '#0079E4',
+                            '#59AFFF'
+                        ],
+                        borderColor: '#FFFFFF',
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#374151',
+                                font: {
+                                    size: 14,
+                                    family: "'Inter', sans-serif"
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const item = tooltipItems[0];
+                                    let label = item.chart.data.labels[item.dataIndex];
+                                    if (Array.isArray(label)) {
+                                      return label.join(' ');
+                                    } else {
+                                      return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
